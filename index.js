@@ -4,21 +4,21 @@ const { REST } = require("@discordjs/rest")
 const { Routes } = require("discord-api-types/v9")
 const fs = require("fs")
 const { Player } = require("discord-player")
+const { Client, GatewayIntentBits } = require('discord.js');
+
 
 dotenv.config()
 const TOKEN = process.env.TOKEN
 
 const LOAD_SLASH = process.argv[2] == "load"
 
-const CLIENT_ID = "924846888929337354"
-const GUILD_ID = "924832445050781766"
+const CLIENT_ID = "537963608022188032"
+const GUILD_ID = "182868145495605253"
 
-const client = new Discord.Client({
-    intents: [
-        "GUILDS",
-        "GUILD_VOICE_STATES"
-    ]
-})
+const client = new Client({ intents: [	GatewayIntentBits.Guilds, 
+	GatewayIntentBits.GuildVoiceStates, 
+	GatewayIntentBits.GuildMembers,
+	GatewayIntentBits.GuildMessages] });
 
 client.slashcommands = new Discord.Collection()
 client.player = new Player(client, {

@@ -1,5 +1,5 @@
 const { SlashCommandBuilder } = require("@discordjs/builders")
-const { MessageEmbed } = require("discord.js")
+const { EmbedBuilder } = require("discord.js")
 const { QueryType } = require("discord-player")
 
 module.exports = {
@@ -32,7 +32,7 @@ module.exports = {
 		const queue = await client.player.createQueue(interaction.guild)
 		if (!queue.connection) await queue.connect(interaction.member.voice.channel)
 
-		let embed = new MessageEmbed()
+		let embed = new EmbedBuilder()
 
 		if (interaction.options.getSubcommand() === "song") {
             let url = interaction.options.getString("url")
@@ -54,7 +54,9 @@ module.exports = {
             let url = interaction.options.getString("url")
             const result = await client.player.search(url, {
                 requestedBy: interaction.user,
-                searchEngine: QueryType.YOUTUBE_PLAYLIST
+                searchEngine: QueryType.YOUTUBE_PLAYLIST,
+                searchEngine: QueryType.SOUNDCLOUD_PLAYLIST,
+                searchEngine: QueryType.SPOTIFY_PLAYLIST
             })
 
             if (result.tracks.length === 0)
@@ -64,7 +66,7 @@ module.exports = {
             await queue.addTracks(result.tracks)
             embed
                 .setDescription(`**${result.tracks.length} songs from [${playlist.title}](${playlist.url})** have been added to the Queue`)
-                .setThumbnail(playlist.thumbnail)
+                //.setThumbnail(playlist.thumbnail)
 		} else if (interaction.options.getSubcommand() === "search") {
             let url = interaction.options.getString("searchterms")
             const result = await client.player.search(url, {
