@@ -5,6 +5,7 @@ const { Routes } = require("discord-api-types/v9")
 const fs = require("fs")
 const { Player } = require("discord-player")
 const { Client, GatewayIntentBits } = require('discord.js');
+const colors = require('colors');
 
 dotenv.config()
 const TOKEN = process.env.TOKEN
@@ -19,24 +20,30 @@ const client = new Client({ intents: [
 	GatewayIntentBits.GuildVoiceStates, 
 	GatewayIntentBits.GuildMembers,
 	GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildPresences
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildMessageTyping,
 ] });
 
 
 const eventFiles = fs
 	.readdirSync("./events")
 	.filter(file => file.endsWith(".js"));
-
+    console.log("----------------------------------------".yellow);
 for (const file of eventFiles) {
+   
 	const event = require(`./events/${file}`);
 	
 	if (event.once) {
 		client.once(event.name, (...args) => event.execute(...args, commands));
+        console.log(`[EVENTS] Couldn't load the file ${file}, missing name or aliases`.red.bold)
 	} else {
 		client.on(event.name, (...args) => event.execute(...args, commands));
+        console.log(`[EVENTS] Loaded a file`.green)
 	}
+   
 }
-
+console.log("----------------------------------------".yellow);
 client.slashcommands = new Discord.Collection()
 client.player = new Player(client, {
     ytdlOptions: {
@@ -72,6 +79,9 @@ if (LOAD_SLASH) {
 }
 else {
     client.on("ready", () => {
+        console.log("----------------------------------------".yellow);
+        console.log(`[SLASH] Loaded a file`.green)
+        console.log("----------------------------------------".yellow);
         console.log(`Logged in as ${client.user.tag}`)
     })
     client.on("interactionCreate", (interaction) => {

@@ -13,9 +13,11 @@
     "@discordjs/opus": "^0.8.0",
     "@discordjs/rest": "^0.3.0",
     "@discordjs/voice": "^0.8.0",
+    "colors": "^1.4.0",
     "discord-player": "^5.3.1",
     "discord.js": "^14.7.1",
-    "dotenv": "^16.0.2"
+    "dotenv": "^16.0.2",
+    "mongoose": "^6.8.0"
   },
   "repository": {
     "type": "git",
