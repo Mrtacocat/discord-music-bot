@@ -6,7 +6,6 @@ const fs = require("fs")
 const { Player } = require("discord-player")
 const { Client, GatewayIntentBits } = require('discord.js');
 
-
 dotenv.config()
 const TOKEN = process.env.TOKEN
 
@@ -15,10 +14,28 @@ const LOAD_SLASH = process.argv[2] == "load"
 const CLIENT_ID = "537963608022188032"
 const GUILD_ID = "182868145495605253"
 
-const client = new Client({ intents: [	GatewayIntentBits.Guilds, 
+const client = new Client({ intents: [	
+    GatewayIntentBits.Guilds, 
 	GatewayIntentBits.GuildVoiceStates, 
 	GatewayIntentBits.GuildMembers,
-	GatewayIntentBits.GuildMessages] });
+	GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildPresences
+] });
+
+
+const eventFiles = fs
+	.readdirSync("./events")
+	.filter(file => file.endsWith(".js"));
+
+for (const file of eventFiles) {
+	const event = require(`./events/${file}`);
+	
+	if (event.once) {
+		client.once(event.name, (...args) => event.execute(...args, commands));
+	} else {
+		client.on(event.name, (...args) => event.execute(...args, commands));
+	}
+}
 
 client.slashcommands = new Discord.Collection()
 client.player = new Player(client, {
@@ -29,6 +46,7 @@ client.player = new Player(client, {
 })
 
 let commands = []
+
 
 const slashFiles = fs.readdirSync("./slash").filter(file => file.endsWith(".js"))
 for (const file of slashFiles){
@@ -70,3 +88,8 @@ else {
     })
     client.login(TOKEN)
 }
+
+
+
+
+
